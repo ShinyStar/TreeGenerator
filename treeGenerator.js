@@ -50,10 +50,10 @@ function drawTree(ctx, x, y, w, h, rotation, i, iterations, type, color, barkcol
         drawLeaves(ctx, 0, -h, -h / 2, 50, 50, type, color);
         drawLeaves(ctx, 0, -h, -h / 2, 50, 50, type, color);
     } else {
-        if (Math.random() > 0.3) {
+        while (Math.random() > 0.4) {
             var holes = new Image();
             holes.src = "treeholes.png";
-            ctx.drawImage(holes, rand(0, 3) * 50, 0, 50, 50, -25, rand(-h / 2, -50), 50, 50);
+            ctx.drawImage(holes, rand(0, 3) * 50, rand(0, 3) * 50, 50, 50, -25, rand(-h / 2, -50), 50, 50);
         }
     }
     drawLeaves(ctx, 0, -h / 5 * 4, -h / 5 * 2, 50, 50, type, color);
