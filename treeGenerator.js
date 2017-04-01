@@ -17,23 +17,30 @@ function createTree(initialW, initialH) {
         color = rand(0,6);
     }
 
-    drawTree(ctx, x, y, w, h, 0, 0, 3, type, color);
+    var barkcolors = ["#834a23","#522b10", "#1a0e05", "#1b1a19", "#797471", "#e3dbd5", "#f8b383", "#c5c782", "#435864"];
+    var barkcolor1 = barkcolors[rand(0, barkcolors.length-1)];
+    var barkcolor2 = barkcolors[rand(0, barkcolors.length-1)];
+
+    var barkType = "woods/wood"+rand(1,5)+".png";
+
+    drawTree(ctx, x, y, w, h, 0, 0, 3, type, color, barkcolor1, barkcolor2, barkType);
 
 }
 
-function drawTree(ctx, x, y, w, h, rotation, i, iterations, type, color) {
+function drawTree(ctx, x, y, w, h, rotation, i, iterations, type, color, barkcolor1, barkcolor2, barkType) {
     if (i == iterations) { return; }
     ctx.save();
     ctx.translate(x, y);
 
     ctx.rotate(rotation * Math.PI / 180);
-    drawTriangle(ctx, 0, 0, w, h);
+    gradientTriangle(ctx, 0, 0, w, h, barkcolor1, barkcolor2);
+    drawTriangle(ctx, 0, 0, w, h, barkType);
     lineTriangle(ctx, 0, 0, w, h, "black");
 
     var times = rand(3, 9);
     for (var j = 0; j < times; j++) {
-        drawTree(ctx, 0, rand(-h / 3 * 2, -h / 2), rand(w / 4, w / 2), rand(h / 4, h / 2), rand(0, 90), i + 1, iterations, type, color);
-        drawTree(ctx, 0, rand(-h / 3 * 2, -h / 2), rand(w / 4, w / 2), rand(h / 4, h / 2), rand(270, 360), i + 1, iterations, type, color);
+        drawTree(ctx, 0, rand(-h / 3 * 2, -h / 2), rand(w / 4, w / 2), rand(h / 4, h / 2), rand(0, 90), i + 1, iterations, type, color, barkcolor1, barkcolor2, barkType);
+        drawTree(ctx, 0, rand(-h / 3 * 2, -h / 2), rand(w / 4, w / 2), rand(h / 4, h / 2), rand(270, 360), i + 1, iterations, type, color, barkcolor1, barkcolor2, barkType);
     }
 
     if (i != 0) {
@@ -67,16 +74,18 @@ function drawLeaves(ctx, x, y1, y2, w, h, type, color) {
     }
 }
 
-function drawTriangle(ctx, x, y, w, h) { //x,y on center of bottom side of triangle placed like this /_\
+function drawTriangle(ctx, x, y, w, h, barkType) { //x,y on center of bottom side of triangle placed like this /_\
     var bark = new Image();
-    bark.src = "wood.png";
+    bark.src = barkType;
     ctx.fillStyle = ctx.createPattern(bark, "repeat");
+    ctx.globalAlpha = 0.5;
     ctx.beginPath();
     ctx.moveTo(x - w / 2, y);
     ctx.lineTo(x + w / 2, y);
     ctx.lineTo(x, y - h);
     ctx.closePath();
     ctx.fill();
+    ctx.globalAlpha = 1;
 }
 
 function lineTriangle(ctx, x, y, w, h, color) {
@@ -87,6 +96,20 @@ function lineTriangle(ctx, x, y, w, h, color) {
     ctx.lineTo(x, y - h);
     ctx.closePath();
     ctx.stroke();
+}
+
+function gradientTriangle(ctx, x, y, w, h, barkcolor1, barkcolor2) {    
+    var gradient = ctx.createLinearGradient(x,y,x,y-h);
+    console.log(barkcolor1)
+    gradient.addColorStop(0,barkcolor1);
+    gradient.addColorStop(1,barkcolor2);
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(x - w / 2, y);
+    ctx.lineTo(x + w / 2, y);
+    ctx.lineTo(x, y - h);
+    ctx.closePath();
+    ctx.fill();
 }
 
 function drawLeave(ctx, x, y, w, h, type, color) {
