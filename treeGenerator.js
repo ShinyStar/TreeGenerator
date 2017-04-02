@@ -6,15 +6,22 @@ function createTree(initialW, initialH) {
     var ctx = document.getElementById("canvas").getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    var x = 500, y = 800, w = initialW, h = initialH;
+    var x = 900, y = 800, w = initialW, h = initialH;
+    var types = [];
+    var colors = [];
 
-    var type = document.getElementById("type").value
-    var color = document.getElementById("color").value
-    if(type=="random"){
-        type = rand(0,6);
+    for(var i=0;i<7;i++){
+        if(document.getElementById("t"+i).checked){
+            types.push(i);
+        }
     }
-    if(color=="random"){
-        color = rand(0,6);
+    for(i=0;i<7;i++){
+        if(document.getElementById("c"+i).checked){
+            colors.push(i);
+        }
+    }
+    if(colors.length==0){
+        colors.push(0);
     }
 
     var barkcolors = ["#834a23","#522b10", "#1a0e05", "#1b1a19", "#797471", "#e3dbd5", "#f8b383", "#c5c782", "#435864"];
@@ -23,11 +30,11 @@ function createTree(initialW, initialH) {
 
     var barkType = "woods/wood"+rand(1,5)+".png";
 
-    drawTree(ctx, x, y, w, h, 0, 0, 3, type, color, barkcolor1, barkcolor2, barkType);
+    drawTree(ctx, x, y, w, h, 0, 0, 3, types, colors, barkcolor1, barkcolor2, barkType);
 
 }
 
-function drawTree(ctx, x, y, w, h, rotation, i, iterations, type, color, barkcolor1, barkcolor2, barkType) {
+function drawTree(ctx, x, y, w, h, rotation, i, iterations, types, colors, barkcolor1, barkcolor2, barkType) {
     if (i == iterations) { return; }
     ctx.save();
     ctx.translate(x, y);
@@ -39,16 +46,16 @@ function drawTree(ctx, x, y, w, h, rotation, i, iterations, type, color, barkcol
 
     var times = rand(3, 9);
     for (var j = 0; j < times; j++) {
-        drawTree(ctx, 0, rand(-h / 3 * 2, -h / 2), rand(w / 4, w / 2), rand(h / 4, h / 2), rand(0, 90), i + 1, iterations, type, color, barkcolor1, barkcolor2, barkType);
-        drawTree(ctx, 0, rand(-h / 3 * 2, -h / 2), rand(w / 4, w / 2), rand(h / 4, h / 2), rand(270, 360), i + 1, iterations, type, color, barkcolor1, barkcolor2, barkType);
+        drawTree(ctx, 0, rand(-h / 3 * 2, -h / 2), rand(w / 4, w / 2), rand(h / 4, h / 2), rand(0, 90), i + 1, iterations, types, colors, barkcolor1, barkcolor2, barkType);
+        drawTree(ctx, 0, rand(-h / 3 * 2, -h / 2), rand(w / 4, w / 2), rand(h / 4, h / 2), rand(270, 360), i + 1, iterations, types, colors, barkcolor1, barkcolor2, barkType);
     }
 
     if (i != 0) {
-        drawLeaves(ctx, 0, 0, -h, 50, 50, type, color);
-        drawLeaves(ctx, 0, 0, -h, 50, 50, type, color);
-        drawLeaves(ctx, 0, 0, -h, 50, 50, type, color);
-        drawLeaves(ctx, 0, -h, -h / 2, 50, 50, type, color);
-        drawLeaves(ctx, 0, -h, -h / 2, 50, 50, type, color);
+        drawLeaves(ctx, 0, 0, -h, 50, 50, types, colors);
+        drawLeaves(ctx, 0, 0, -h, 50, 50, types, colors);
+        drawLeaves(ctx, 0, 0, -h, 50, 50, types, colors);
+        drawLeaves(ctx, 0, -h, -h / 2, 50, 50, types, colors);
+        drawLeaves(ctx, 0, -h, -h / 2, 50, 50, types, colors);
     } else {
         while (Math.random() > 0.4) {
             var holes = new Image();
@@ -56,19 +63,21 @@ function drawTree(ctx, x, y, w, h, rotation, i, iterations, type, color, barkcol
             ctx.drawImage(holes, rand(0, 3) * 50, rand(0, 3) * 50, 50, 50, -25, rand(-h / 2, -50), 50, 50);
         }
     }
-    drawLeaves(ctx, 0, -h / 5 * 4, -h / 5 * 2, 50, 50, type, color);
-    drawLeaves(ctx, 0, -h / 2, -h / 2, 50, 50, type, color);
+    drawLeaves(ctx, 0, -h / 5 * 4, -h / 5 * 2, 50, 50, types, colors);
+    drawLeaves(ctx, 0, -h / 2, -h / 2, 50, 50, types, colors);
 
     ctx.restore();
 
 }
 
-function drawLeaves(ctx, x, y1, y2, w, h, type, color) {
+function drawLeaves(ctx, x, y1, y2, w, h, types, colors) {
     for (var i = 0; i < 10; i++) {
         var y = rand(y1, y2);
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(rand(0, 360) * Math.PI / 180);
+        var type = types[rand(0,types.length-1)];
+        var color = colors[rand(0,colors.length-1)];
         drawLeave(ctx, 0, 0, rand(w / 2, w), rand(h / 2, h), type, color);
         ctx.restore();
     }
@@ -100,7 +109,6 @@ function lineTriangle(ctx, x, y, w, h, color) {
 
 function gradientTriangle(ctx, x, y, w, h, barkcolor1, barkcolor2) {    
     var gradient = ctx.createLinearGradient(x,y,x,y-h);
-    console.log(barkcolor1)
     gradient.addColorStop(0,barkcolor1);
     gradient.addColorStop(1,barkcolor2);
     ctx.fillStyle = gradient;
